@@ -38,8 +38,13 @@ td{padding:14px 24px;border-top:1px solid var(--bd)}.r{text-align:right}.empty{p
 .ft{padding:14px 24px;background:#f8fafc;border-top:1px solid var(--bd);display:flex;justify-content:space-between;color:var(--t);flex-wrap:wrap;gap:8px}
 .hist td{background:#f8fafc;color:var(--t);font-size:13px;padding:8px 24px 8px 48px}.link{cursor:pointer;font-weight:700}
 #err{max-width:1100px;margin:12px auto 0;padding:0 16px;color:var(--r)}
-#mb{position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;place-items:center;z-index:9}#mb.on{display:grid}
-#mb .win{background:#fff;border-radius:16px;width:min(440px,94vw);overflow:hidden}#mb form{grid-template-columns:1fr}.row{display:flex;gap:8px}.row .btn{flex:1}.btn.g{background:#e2e8f0;color:var(--n)}
+.mb{position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;place-items:center;z-index:9}.mb.on{display:grid}
+.mb .win{max-height:92vh;overflow:auto;background:#fff;border-radius:16px;width:min(440px,94vw);overflow:hidden}.mb form{grid-template-columns:1fr}.row{display:flex;gap:8px}.row .btn{flex:1}.btn.g{background:#e2e8f0;color:var(--n)}
+.ts{overflow-x:auto;-webkit-overflow-scrolling:touch}.ts table{min-width:640px}
+@media(max-width:700px){header{padding:12px 14px;gap:10px}nav{margin-left:0;order:3;width:100%;overflow-x:auto}nav a{padding:8px 12px;white-space:nowrap}
+.sp{display:none}.mes{margin-left:auto}.mes span{min-width:110px}main{margin:14px auto;padding:0 10px;gap:14px}.pad{padding:16px}.big{font-size:36px}
+.barw{min-width:0;max-width:none;width:100%}.kpis{grid-template-columns:1fr 1fr}.kpi b{font-size:18px}.hd{padding:12px 16px}form{padding:16px}
+input,select{font-size:16px}th,td{padding:10px 14px}.ft{padding:12px 16px}.hist td{padding:8px 14px}}
 footer{text-align:center;color:var(--t);padding:20px}
 </style></head><body>
 <header><div class="logo">$</div><div class="brand"><small>FINANZAS PERSONALES</small><b>PRESUPUESTO MENSUAL</b></div>
@@ -52,29 +57,31 @@ footer{text-align:center;color:var(--t);padding:20px}
   <div class="hero"><div class="big"><span id="queda">$0</span> <small>COP</small></div>
   <div class="barw"><div style="display:flex;justify-content:space-between"><span id="pct"></span><b id="rec"></b></div><div class="bar"><i id="barra" style="width:0"></i></div></div></div>
   <div class="kpis" id="kpis"></div></div>
- <div class="card"><div class="hd"><h2>REGISTRAR MOVIMIENTO</h2><small>Ingresos y gastos rápidos</small></div>
-  <form id="fm"><label>Fecha<input type="date" name="fecha" required></label><label>Descripción<input name="descripcion" placeholder="Ej: sueldo, mercado"></label>
-  <label>Tipo<select name="tipo"><option value="Ingreso">Ingreso (+)</option><option value="Necesidad">Necesidad (−)</option><option value="Gusto">Gusto (−)</option><option value="Ahorro">Ahorro (−)</option></select></label>
-  <label>Monto ($)<input class="m" name="monto" inputmode="numeric" placeholder="0" required></label><button class="btn">+ Agregar</button></form>
-  <table><tbody id="reciente"></tbody></table></div>
+ <div class="card"><div class="hd"><h2>REGISTRAR MOVIMIENTO</h2><button class="btn s" id="nm">+ Agregar movimiento</button></div>
+  
+  <div class="ts"><table><tbody id="reciente"></tbody></table></div></div>
 </section>
 <section class="vista" id="v-movs"><div class="card"><div class="hd"><h2>MOVIMIENTOS DEL PRESUPUESTO</h2><div class="chips" id="chips"></div></div>
- <table><thead><tr><th>FECHA<th>DESCRIPCIÓN<th>TIPO<th class="r">MONTO<th></tr></thead><tbody id="tm"></tbody></table><div class="ft"><span id="cnt"></span><b id="tot"></b></div></div></section>
-<section class="vista" id="v-deudas"><div class="card"><div class="hd d"><h2>DEUDAS Y PRÉSTAMOS</h2><small>Préstamo: suma a tus ingresos · Deuda: compromiso a pagar</small></div>
- <form id="fd"><label>Acreedor / Persona<input name="acreedor" required></label><label>Concepto<input name="concepto"></label>
- <label>Tipo<select name="tipo"><option value="Deuda">Deuda (por pagar)</option><option value="Préstamo">Préstamo (me dieron plata)</option></select></label>
- <label>Monto total<input class="m" name="monto" inputmode="numeric" required></label>
- <label>Fecha en que la adquirí<input type="date" name="fecha" required></label><label>Fecha límite <em>(opcional)</em><input type="date" name="fechaLimite"></label>
- <button class="btn">+ Agregar</button></form></div>
- <div class="card"><table><thead><tr><th>ACREEDOR<th>CONCEPTO<th>TIPO<th class="r">DEUDA<th class="r">ABONADO<th class="r">FALTA<th>LÍMITE<th>ESTADO<th></tr></thead><tbody id="td"></tbody></table>
+ <div class="ts"><table><thead><tr><th>FECHA<th>DESCRIPCIÓN<th>TIPO<th class="r">MONTO<th></tr></thead><tbody id="tm"></tbody></table></div><div class="ft"><span id="cnt"></span><b id="tot"></b></div></div></section>
+<section class="vista" id="v-deudas"><div class="card"><div class="hd d"><h2>DEUDAS Y PRÉSTAMOS</h2><small>Préstamo: suma a tus ingresos · Deuda: compromiso a pagar</small><button class="btn s" id="nd">+ Agregar deuda</button></div>
+ </div>
+ <div class="card"><div class="ts"><table><thead><tr><th>ACREEDOR<th>CONCEPTO<th>TIPO<th class="r">DEUDA<th class="r">ABONADO<th class="r">FALTA<th>LÍMITE<th>ESTADO<th></tr></thead><tbody id="td"></tbody></table></div>
  <div class="ft"><span id="cd"></span><span id="rd"></span></div></div></section>
 <section class="vista" id="v-bancos"><div class="card"><div class="hd d"><h2>BANCOS</h2><button class="btn s" id="nb">+ Deuda de banco</button></div>
-  <table><thead><tr><th>BANCO<th>CONCEPTO<th class="r">DEUDA<th class="r">ABONADO<th class="r">FALTA<th>LÍMITE<th></tr></thead><tbody id="tb"></tbody></table>
+  <div class="ts"><table><thead><tr><th>BANCO<th>CONCEPTO<th class="r">DEUDA<th class="r">ABONADO<th class="r">FALTA<th>LÍMITE<th></tr></thead><tbody id="tb"></tbody></table></div>
   <div class="ft"><span id="cb"></span><span id="rb"></span></div></div>
 </section>
 </main>
 <footer>Presupuesto Mensual · Control de gastos y deudas</footer>
-<div id="mb"><div class="win"><div class="hd d"><h2>DEUDA DE BANCO</h2></div>
+<div class="mb" id="mm"><div class="win"><div class="hd"><h2>NUEVO MOVIMIENTO</h2></div><form id="fm"><label>Fecha<input type="date" name="fecha" required></label><label>Descripción<input name="descripcion" placeholder="Ej: sueldo, mercado"></label>
+  <label>Tipo<select name="tipo"><option value="Ingreso">Ingreso (+)</option><option value="Necesidad">Necesidad (−)</option><option value="Gusto">Gusto (−)</option><option value="Ahorro">Ahorro (−)</option></select></label>
+  <label>Monto ($)<input class="m" name="monto" inputmode="numeric" placeholder="0" required></label><div class="row"><button type="button" class="btn g" data-x>Cancelar</button><button class="btn">Guardar</button></div></form></div></div>
+<div class="mb" id="md"><div class="win"><div class="hd"><h2>NUEVA DEUDA O PRÉSTAMO</h2></div><form id="fd"><label>Acreedor / Persona<input name="acreedor" required></label><label>Concepto<input name="concepto"></label>
+ <label>Tipo<select name="tipo"><option value="Deuda">Deuda (por pagar)</option><option value="Préstamo">Préstamo (me dieron plata)</option></select></label>
+ <label>Monto total<input class="m" name="monto" inputmode="numeric" required></label>
+ <label>Fecha en que la adquirí<input type="date" name="fecha" required></label><label>Fecha límite <em>(opcional)</em><input type="date" name="fechaLimite"></label>
+ <div class="row"><button type="button" class="btn g" data-x>Cancelar</button><button class="btn">Guardar</button></div></form></div></div>
+<div class="mb" id="mb"><div class="win"><div class="hd d"><h2>DEUDA DE BANCO</h2></div>
 <form id="fb"><label>Banco<input name="acreedor" placeholder="Ej: Bancolombia" required></label><label>Concepto <em>(opcional)</em><input name="concepto" placeholder="Tarjeta, crédito de libre inversión..."></label>
 <label>Monto total<input class="m" name="monto" inputmode="numeric" required></label><label>Fecha en que la adquirí<input type="date" name="fecha" required></label>
 <label>Fecha límite <em>(opcional)</em><input type="date" name="fechaLimite"></label>
@@ -92,8 +99,9 @@ function mover(n){const [y,m]=mes.split('-').map(Number),d=new Date(y,m-1+n,1);m
 $('#ant').onclick=()=>mover(-1);$('#sig').onclick=()=>mover(1);
 async function api(u,o={}){const r=await fetch(u,{...o,headers:{'content-type':'application/json'},body:o.body&&JSON.stringify(o.body)});
  const j=await r.json();if(!r.ok)throw new Error(j.error);return j}
-function envio(f,url){f.onsubmit=async e=>{e.preventDefault();try{const b=Object.fromEntries(new FormData(f));b.monto=num(b.monto);await api(url,{method:'POST',body:b});f.reset();f.fecha.value=hoy;cargar()}catch(x){$('#err').textContent=x.message}}}
+function envio(f,url){f.onsubmit=async e=>{e.preventDefault();try{const b=Object.fromEntries(new FormData(f));b.monto=num(b.monto);await api(url,{method:'POST',body:b});f.reset();f.fecha.value=hoy;f.closest('.mb').classList.remove('on');cargar()}catch(x){$('#err').textContent=x.message}}}
 envio($('#fm'),'/api/movimientos');envio($('#fd'),'/api/deudas');
+$('#nm').onclick=()=>$('#mm').classList.add('on');$('#nd').onclick=()=>$('#md').classList.add('on');document.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>b.closest('.mb').classList.remove('on'));
 $('#nb').onclick=()=>$('#mb').classList.add('on');$('#cb2').onclick=()=>$('#mb').classList.remove('on');
 $('#fb').onsubmit=async e=>{e.preventDefault();try{const b=Object.fromEntries(new FormData(e.target));b.monto=num(b.monto);b.tipo='Deuda';b.categoria='Banco';await api('/api/deudas',{method:'POST',body:b});e.target.reset();e.target.fecha.value=hoy;$('#mb').classList.remove('on');cargar()}catch(x){$('#err').textContent=x.message}};
 const borrar=async u=>{if(confirm('¿Eliminar?')){await api(u,{method:'DELETE'});cargar()}};
