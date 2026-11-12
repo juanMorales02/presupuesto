@@ -43,7 +43,7 @@ td{padding:14px 24px;border-top:1px solid var(--bd)}.r{text-align:right}.empty{p
 footer{text-align:center;color:var(--t);padding:20px}
 </style></head><body>
 <header><div class="logo">$</div><div class="brand"><small>FINANZAS PERSONALES</small><b>PRESUPUESTO MENSUAL</b></div>
-<nav><a data-v="resumen" class="on">Resumen</a><a data-v="movs">Movimientos</a><a data-v="deudas">Deudas</a></nav><div class="sp"></div>
+<nav><a data-v="resumen" class="on">Resumen</a><a data-v="movs">Movimientos</a><a data-v="deudas">Deudas</a><a data-v="bancos">Bancos</a></nav><div class="sp"></div>
 <div class="mes"><button id="ant">‹</button><span id="mesl"></span><button id="sig">›</button></div></header>
 <div id="err"></div>
 <main>
@@ -57,9 +57,6 @@ footer{text-align:center;color:var(--t);padding:20px}
   <label>Tipo<select name="tipo"><option value="Ingreso">Ingreso (+)</option><option value="Necesidad">Necesidad (−)</option><option value="Gusto">Gusto (−)</option><option value="Ahorro">Ahorro (−)</option></select></label>
   <label>Monto ($)<input class="m" name="monto" inputmode="numeric" placeholder="0" required></label><button class="btn">+ Agregar</button></form>
   <table><tbody id="reciente"></tbody></table></div>
-<div class="card"><div class="hd d"><h2>BANCOS</h2><button class="btn s" id="nb">+ Deuda de banco</button></div>
-  <table><thead><tr><th>BANCO<th>CONCEPTO<th class="r">DEUDA<th class="r">ABONADO<th class="r">FALTA<th>LÍMITE<th></tr></thead><tbody id="tb"></tbody></table>
-  <div class="ft"><span id="cb"></span><span id="rb"></span></div></div>
 </section>
 <section class="vista" id="v-movs"><div class="card"><div class="hd"><h2>MOVIMIENTOS DEL PRESUPUESTO</h2><div class="chips" id="chips"></div></div>
  <table><thead><tr><th>FECHA<th>DESCRIPCIÓN<th>TIPO<th class="r">MONTO<th></tr></thead><tbody id="tm"></tbody></table><div class="ft"><span id="cnt"></span><b id="tot"></b></div></div></section>
@@ -71,6 +68,10 @@ footer{text-align:center;color:var(--t);padding:20px}
  <button class="btn">+ Agregar</button></form></div>
  <div class="card"><table><thead><tr><th>ACREEDOR<th>CONCEPTO<th>TIPO<th class="r">DEUDA<th class="r">ABONADO<th class="r">FALTA<th>LÍMITE<th>ESTADO<th></tr></thead><tbody id="td"></tbody></table>
  <div class="ft"><span id="cd"></span><span id="rd"></span></div></div></section>
+<section class="vista" id="v-bancos"><div class="card"><div class="hd d"><h2>BANCOS</h2><button class="btn s" id="nb">+ Deuda de banco</button></div>
+  <table><thead><tr><th>BANCO<th>CONCEPTO<th class="r">DEUDA<th class="r">ABONADO<th class="r">FALTA<th>LÍMITE<th></tr></thead><tbody id="tb"></tbody></table>
+  <div class="ft"><span id="cb"></span><span id="rb"></span></div></div>
+</section>
 </main>
 <footer>Presupuesto Mensual · Control de gastos y deudas</footer>
 <div id="mb"><div class="win"><div class="hd d"><h2>DEUDA DE BANCO</h2></div>
@@ -99,12 +100,12 @@ const borrar=async u=>{if(confirm('¿Eliminar?')){await api(u,{method:'DELETE'})
 const abonar=async id=>{const m=num(prompt('Monto del abono (COP)')||'');if(m){await api('/api/deudas?id='+id,{method:'PATCH',body:{monto:m,fecha:hoy}});cargar()}};
 const toggle=id=>{const r=document.getElementById('h'+id);r.style.display=r.style.display==='none'?'':'none'};
 function filas(m){return m.map(x=>`<tr><td>${fd(x.fecha)}<td>${esc(x.descripcion)}<td><span class="tag ${x.tipo}">${x.tipo}</span><td class="r ${x.tipo==='Ingreso'?'pos':'neg'}">${x.tipo==='Ingreso'?'+':'−'}${$$(x.monto)}<td class="r"><button class="x" onclick="borrar('/api/movimientos?id=${x._id}')">✕</button>`).join('')||'<tr><td colspan=5 class="empty">Sin movimientos este mes</td></tr>'}
-function pinta(){const {r,m,d}=D;
+function pinta(){const {r,m,d}=D;const tB=d.filter(x=>x.categoria==='Banco').reduce((a,x)=>a+x.monto-(x.abonos||[]).reduce((y,z)=>y+z.monto,0),0);
  $('#mesl').textContent=new Date(mes+'-01T00:00').toLocaleDateString('es-CO',{month:'long',year:'numeric'});
  $('#queda').textContent=$$(r.queda);$('#queda').style.color=r.queda<0?'var(--r)':'';$('#barra').style.width=r.porcentajeQueda*100+'%';
  $('#pct').textContent=(r.porcentajeQueda*100).toFixed(1)+'% disponible';$('#rec').textContent='de '+$$(r.ingresos)+' recibidos';
  const k=(t,v,s,c='')=>`<div class="kpi ${c}"><span>${t}</span><b>${$$(v)}</b><small>${s}</small></div>`;
- $('#kpis').innerHTML=k('Necesidades',r.gastos.Necesidad,'Servicios y comida')+k('Gustos',r.gastos.Gusto,'Ocio y deseos')+k('Ahorros',r.gastos.Ahorro,'Fondo de reserva')+k('Abonos a deudas',r.abonos,'Pagado este mes','y')+k('Préstamos recibidos',r.prestamos,'Créditos de terceros')+k('Falta por pagar',r.faltaDeudas,'Compromiso pendiente','r');
+ $('#kpis').innerHTML=k('Necesidades',r.gastos.Necesidad,'Servicios y comida')+k('Gustos',r.gastos.Gusto,'Ocio y deseos')+k('Ahorros',r.gastos.Ahorro,'Fondo de reserva')+k('Abonos a deudas',r.abonos,'Pagado este mes','y')+k('Préstamos recibidos',r.prestamos,'Créditos de terceros')+k('Falta por pagar',r.faltaDeudas,'Compromiso pendiente','r')+k('Deuda de bancos',tB,'Total pendiente','r');
  $('#reciente').innerHTML=filas(m.slice(0,5));
  $('#chips').innerHTML=['Todos','Ingreso','Necesidad','Gusto','Ahorro'].map(t=>`<span class="chip ${t===filtro?'on':''}" onclick="filtro='${t}';pinta()">${t}</span>`).join('');
  const f=m.filter(x=>filtro==='Todos'||x.tipo===filtro);$('#tm').innerHTML=filas(f);$('#cnt').textContent=f.length+' movimiento(s)';
