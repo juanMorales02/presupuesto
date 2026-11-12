@@ -11,7 +11,6 @@ nav a{color:#cbd5e1;padding:8px 16px;border-radius:7px;cursor:pointer;text-decor
 nav a.on{background:var(--b);color:#fff}
 .sp{flex:1}.mes{display:flex;align-items:center;gap:6px;border:1px solid #334155;border-radius:10px;padding:4px}
 .mes button{background:none;border:0;color:#fff;font-size:18px;cursor:pointer;padding:4px 10px}.mes span{min-width:150px;text-align:center;font-weight:600;text-transform:capitalize}
-.lock{background:none;border:1px solid #334155;color:#cbd5e1;border-radius:10px;padding:9px 14px;cursor:pointer}
 main{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;gap:20px}.vista{display:none;gap:20px}.vista.on{display:grid}
 .card{background:#fff;border:1px solid var(--bd);border-radius:16px;box-shadow:0 4px 18px rgba(15,23,42,.05);overflow:hidden}
 .pad{padding:24px}.hero{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-end}
@@ -39,13 +38,13 @@ td{padding:14px 24px;border-top:1px solid var(--bd)}.r{text-align:right}.empty{p
 .ft{padding:14px 24px;background:#f8fafc;border-top:1px solid var(--bd);display:flex;justify-content:space-between;color:var(--t);flex-wrap:wrap;gap:8px}
 .hist td{background:#f8fafc;color:var(--t);font-size:13px;padding:8px 24px 8px 48px}.link{cursor:pointer;font-weight:700}
 #err{max-width:1100px;margin:12px auto 0;padding:0 16px;color:var(--r)}
-#login{position:fixed;inset:0;background:rgba(15,23,42,.7);display:none;place-items:center;z-index:9}
-#login div{background:#fff;border-radius:16px;padding:30px;width:320px;display:grid;gap:14px;text-align:center}
+#mb{position:fixed;inset:0;background:rgba(15,23,42,.6);display:none;place-items:center;z-index:9}#mb.on{display:grid}
+#mb .win{background:#fff;border-radius:16px;width:min(440px,94vw);overflow:hidden}#mb form{grid-template-columns:1fr}.row{display:flex;gap:8px}.row .btn{flex:1}.btn.g{background:#e2e8f0;color:var(--n)}
 footer{text-align:center;color:var(--t);padding:20px}
 </style></head><body>
 <header><div class="logo">$</div><div class="brand"><small>FINANZAS PERSONALES</small><b>PRESUPUESTO MENSUAL</b></div>
 <nav><a data-v="resumen" class="on">Resumen</a><a data-v="movs">Movimientos</a><a data-v="deudas">Deudas</a></nav><div class="sp"></div>
-<div class="mes"><button id="ant">‹</button><span id="mesl"></span><button id="sig">›</button></div><button class="lock" id="lk">🔒 Clave</button></header>
+<div class="mes"><button id="ant">‹</button><span id="mesl"></span><button id="sig">›</button></div></header>
 <div id="err"></div>
 <main>
 <section class="vista on" id="v-resumen">
@@ -58,6 +57,9 @@ footer{text-align:center;color:var(--t);padding:20px}
   <label>Tipo<select name="tipo"><option value="Ingreso">Ingreso (+)</option><option value="Necesidad">Necesidad (−)</option><option value="Gusto">Gusto (−)</option><option value="Ahorro">Ahorro (−)</option></select></label>
   <label>Monto ($)<input class="m" name="monto" inputmode="numeric" placeholder="0" required></label><button class="btn">+ Agregar</button></form>
   <table><tbody id="reciente"></tbody></table></div>
+<div class="card"><div class="hd d"><h2>BANCOS</h2><button class="btn s" id="nb">+ Deuda de banco</button></div>
+  <table><thead><tr><th>BANCO<th>CONCEPTO<th class="r">DEUDA<th class="r">ABONADO<th class="r">FALTA<th>LÍMITE<th></tr></thead><tbody id="tb"></tbody></table>
+  <div class="ft"><span id="cb"></span><span id="rb"></span></div></div>
 </section>
 <section class="vista" id="v-movs"><div class="card"><div class="hd"><h2>MOVIMIENTOS DEL PRESUPUESTO</h2><div class="chips" id="chips"></div></div>
  <table><thead><tr><th>FECHA<th>DESCRIPCIÓN<th>TIPO<th class="r">MONTO<th></tr></thead><tbody id="tm"></tbody></table><div class="ft"><span id="cnt"></span><b id="tot"></b></div></div></section>
@@ -71,7 +73,11 @@ footer{text-align:center;color:var(--t);padding:20px}
  <div class="ft"><span id="cd"></span><span id="rd"></span></div></div></section>
 </main>
 <footer>Presupuesto Mensual · Control de gastos y deudas</footer>
-<div id="login"><div><b style="font-size:18px">🔒 Ingresa tu clave</b><input type="password" id="pw" placeholder="Clave"><button class="btn" id="ok">Entrar</button></div></div>
+<div id="mb"><div class="win"><div class="hd d"><h2>DEUDA DE BANCO</h2></div>
+<form id="fb"><label>Banco<input name="acreedor" placeholder="Ej: Bancolombia" required></label><label>Concepto <em>(opcional)</em><input name="concepto" placeholder="Tarjeta, crédito de libre inversión..."></label>
+<label>Monto total<input class="m" name="monto" inputmode="numeric" required></label><label>Fecha en que la adquirí<input type="date" name="fecha" required></label>
+<label>Fecha límite <em>(opcional)</em><input type="date" name="fechaLimite"></label>
+<div class="row"><button type="button" class="btn g" id="cb2">Cancelar</button><button class="btn">Guardar</button></div></form></div></div>
 <script>
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $$=n=>'$'+Math.round(n).toLocaleString('es-CO'),hoy=new Date().toISOString().slice(0,10);
@@ -83,12 +89,12 @@ document.querySelectorAll('[type=date]').forEach(i=>{if(i.name==='fecha')i.value
 document.querySelectorAll('nav a').forEach(a=>a.onclick=()=>{document.querySelectorAll('nav a,.vista').forEach(x=>x.classList.remove('on'));a.classList.add('on');$('#v-'+a.dataset.v).classList.add('on')});
 function mover(n){const [y,m]=mes.split('-').map(Number),d=new Date(y,m-1+n,1);mes=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');cargar()}
 $('#ant').onclick=()=>mover(-1);$('#sig').onclick=()=>mover(1);
-function pedirClave(){$('#login').style.display='grid';$('#pw').focus()}
-$('#lk').onclick=pedirClave;$('#ok').onclick=()=>{localStorage.pw=$('#pw').value;$('#login').style.display='none';cargar()};$('#pw').onkeydown=e=>e.key==='Enter'&&$('#ok').click();
-async function api(u,o={}){const r=await fetch(u,{...o,headers:{'content-type':'application/json','x-password':localStorage.pw||''},body:o.body&&JSON.stringify(o.body)});
- const j=await r.json();if(r.status===401){pedirClave();throw new Error('Ingresa la clave')}if(!r.ok)throw new Error(j.error);return j}
+async function api(u,o={}){const r=await fetch(u,{...o,headers:{'content-type':'application/json'},body:o.body&&JSON.stringify(o.body)});
+ const j=await r.json();if(!r.ok)throw new Error(j.error);return j}
 function envio(f,url){f.onsubmit=async e=>{e.preventDefault();try{const b=Object.fromEntries(new FormData(f));b.monto=num(b.monto);await api(url,{method:'POST',body:b});f.reset();f.fecha.value=hoy;cargar()}catch(x){$('#err').textContent=x.message}}}
 envio($('#fm'),'/api/movimientos');envio($('#fd'),'/api/deudas');
+$('#nb').onclick=()=>$('#mb').classList.add('on');$('#cb2').onclick=()=>$('#mb').classList.remove('on');
+$('#fb').onsubmit=async e=>{e.preventDefault();try{const b=Object.fromEntries(new FormData(e.target));b.monto=num(b.monto);b.tipo='Deuda';b.categoria='Banco';await api('/api/deudas',{method:'POST',body:b});e.target.reset();e.target.fecha.value=hoy;$('#mb').classList.remove('on');cargar()}catch(x){$('#err').textContent=x.message}};
 const borrar=async u=>{if(confirm('¿Eliminar?')){await api(u,{method:'DELETE'});cargar()}};
 const abonar=async id=>{const m=num(prompt('Monto del abono (COP)')||'');if(m){await api('/api/deudas?id='+id,{method:'PATCH',body:{monto:m,fecha:hoy}});cargar()}};
 const toggle=id=>{const r=document.getElementById('h'+id);r.style.display=r.style.display==='none'?'':'none'};
@@ -103,6 +109,9 @@ function pinta(){const {r,m,d}=D;
  $('#chips').innerHTML=['Todos','Ingreso','Necesidad','Gusto','Ahorro'].map(t=>`<span class="chip ${t===filtro?'on':''}" onclick="filtro='${t}';pinta()">${t}</span>`).join('');
  const f=m.filter(x=>filtro==='Todos'||x.tipo===filtro);$('#tm').innerHTML=filas(f);$('#cnt').textContent=f.length+' movimiento(s)';
  $('#tot').textContent='Total: '+$$(f.reduce((a,x)=>a+(x.tipo==='Ingreso'?x.monto:-x.monto),0));
+ let bt=0,br=0;const bk=d.filter(x=>x.categoria==='Banco');$('#tb').innerHTML=bk.map(x=>{const ab=(x.abonos||[]).reduce((a,y)=>a+y.monto,0),fa=x.monto-ab;bt+=x.monto;br+=fa;
+  return `<tr><td><b>${esc(x.acreedor)}</b><td>${esc(x.concepto)}<td class="r">${$$(x.monto)}<td class="r pos">${$$(ab)}<td class="r" style="color:var(--r);font-weight:700">${$$(fa)}<td>${x.fechaLimite?fd(x.fechaLimite):'—'}<td class="r"><button class="btn s" onclick="abonar('${x._id}')">+ Abonar</button> <button class="x" onclick="borrar('/api/deudas?id=${x._id}')">✕</button>`}).join('')||'<tr><td colspan=7 class="empty">Sin deudas de banco</td></tr>';
+ $('#cb').textContent=bk.length+' deuda(s) de banco · Total: '+$$(bt);$('#rb').innerHTML='Resta: <b style="color:var(--r)">'+$$(br)+'</b>';
  let tc=0,tr=0;$('#td').innerHTML=d.map(x=>{const ab=(x.abonos||[]).reduce((a,y)=>a+y.monto,0),fa=x.monto-ab;tc+=x.monto;tr+=fa;
   const e=fa<=0?['Pagado','Pagado']:!x.fechaLimite?['Sin fecha de pago','Sin']:x.fechaLimite<hoy?['Vencida','Vencida']:['Pendiente','Pendiente'];
   const h=(x.abonos||[]).map(a=>`${fd(a.fecha)}: ${$$(a.monto)}`).join(' · ')||'Sin abonos todavía';
