@@ -113,7 +113,7 @@ function pinta(){const {r,m,d}=D;const tB=d.filter(x=>x.categoria==='Banco').red
  $('#queda').textContent=$$(r.queda);$('#queda').style.color=r.queda<0?'var(--r)':'';$('#barra').style.width=r.porcentajeQueda*100+'%';
  $('#pct').textContent=(r.porcentajeQueda*100).toFixed(1)+'% disponible';$('#rec').textContent='de '+$$(r.ingresos)+' recibidos';
  const k=(t,v,s,c='')=>`<div class="kpi ${c}"><span>${t}</span><b>${$$(v)}</b><small>${s}</small></div>`;
- $('#kpis').innerHTML=k('Necesidades',r.gastos.Necesidad,'Servicios y comida')+k('Gustos',r.gastos.Gusto,'Ocio y deseos')+k('Ahorros',r.gastos.Ahorro,'Fondo de reserva')+k('Abonos a deudas',r.abonos,'Pagado este mes','y')+k('Préstamos recibidos',r.prestamos,'Créditos de terceros')+k('Falta por pagar',r.faltaDeudas,'Compromiso pendiente','r')+k('Deuda de bancos',tB,'Total pendiente','r');
+ $('#kpis').innerHTML=k('Necesidades',r.gastos.Necesidad,'Servicios y comida')+k('Gustos',r.gastos.Gusto,'Ocio y deseos')+k('Ahorros',r.gastos.Ahorro,'Fondo de reserva')+k('Abonos a deudas',r.abonos,'Pagado este mes','y')+k('Préstamos recibidos',r.prestamos,'Créditos de terceros')+k('Deuda personal',r.faltaDeudas,'Pendiente en Deudas','r')+k('Deuda de bancos',tB,'Total pendiente','r');
  $('#reciente').innerHTML=filas(m.slice(0,5));
  $('#chips').innerHTML=['Todos','Ingreso','Necesidad','Gusto','Ahorro'].map(t=>`<span class="chip ${t===filtro?'on':''}" onclick="filtro='${t}';pinta()">${t}</span>`).join('');
  const f=m.filter(x=>filtro==='Todos'||x.tipo===filtro);$('#tm').innerHTML=filas(f);$('#cnt').textContent=f.length+' movimiento(s)';
@@ -121,12 +121,12 @@ function pinta(){const {r,m,d}=D;const tB=d.filter(x=>x.categoria==='Banco').red
  let bt=0,br=0;const bk=d.filter(x=>x.categoria==='Banco');$('#tb').innerHTML=bk.map(x=>{const ab=(x.abonos||[]).reduce((a,y)=>a+y.monto,0),fa=x.monto-ab;bt+=x.monto;br+=fa;
   return `<tr><td><b>${esc(x.acreedor)}</b><td>${esc(x.concepto)}<td class="r">${$$(x.monto)}<td class="r pos">${$$(ab)}<td class="r" style="color:var(--r);font-weight:700">${$$(fa)}<td>${x.fechaLimite?fd(x.fechaLimite):'—'}<td class="r"><button class="btn s" onclick="abonar('${x._id}')">+ Abonar</button> <button class="x" onclick="borrar('/api/deudas?id=${x._id}')">✕</button>`}).join('')||'<tr><td colspan=7 class="empty">Sin deudas de banco</td></tr>';
  $('#cb').textContent=bk.length+' deuda(s) de banco · Total: '+$$(bt);$('#rb').innerHTML='Resta: <b style="color:var(--r)">'+$$(br)+'</b>';
- let tc=0,tr=0;$('#td').innerHTML=d.map(x=>{const ab=(x.abonos||[]).reduce((a,y)=>a+y.monto,0),fa=x.monto-ab;tc+=x.monto;tr+=fa;
+ const dp=d.filter(x=>x.categoria!=='Banco');let tc=0,tr=0;$('#td').innerHTML=dp.map(x=>{const ab=(x.abonos||[]).reduce((a,y)=>a+y.monto,0),fa=x.monto-ab;tc+=x.monto;tr+=fa;
   const e=fa<=0?['Pagado','Pagado']:!x.fechaLimite?['Sin fecha de pago','Sin']:x.fechaLimite<hoy?['Vencida','Vencida']:['Pendiente','Pendiente'];
   const h=(x.abonos||[]).map(a=>`${fd(a.fecha)}: ${$$(a.monto)}`).join(' · ')||'Sin abonos todavía';
   return `<tr><td><b>${esc(x.acreedor)}</b><br><span class="link" style="color:var(--b);font-size:12px" onclick="toggle('${x._id}')">Ver abonos (${(x.abonos||[]).length})</span><td>${esc(x.concepto)}<td><span class="tag ${x.tipo}-t">${x.tipo}</span><td class="r">${$$(x.monto)}<td class="r pos">${$$(ab)}<td class="r" style="color:var(--r);font-weight:700">${$$(fa)}<td>${x.fechaLimite?fd(x.fechaLimite):'—'}<td><span class="tag ${e[1]}">${e[0]}</span><td class="r"><button class="btn s" onclick="abonar('${x._id}')">+ Abonar</button> <button class="x" onclick="borrar('/api/deudas?id=${x._id}')">✕</button>
   <tr class="hist" id="h${x._id}" style="display:none"><td colspan="9">Adquirida el ${fd(x.fecha)} · Abonos: ${h}`}).join('')||'<tr><td colspan=9 class="empty">Sin deudas registradas</td></tr>';
- $('#cd').textContent=d.length+' compromiso(s) · Total: '+$$(tc);$('#rd').innerHTML='Resta: <b style="color:var(--r)">'+$$(tr)+'</b>'}
+ $('#cd').textContent=dp.length+' compromiso(s) · Total: '+$$(tc);$('#rd').innerHTML='Resta: <b style="color:var(--r)">'+$$(tr)+'</b>'}
 async function cargar(){try{$('#err').textContent='';const [r,m,d]=await Promise.all([api('/api/resumen?mes='+mes),api('/api/movimientos?mes='+mes),api('/api/deudas')]);D={r,m,d};pinta()}catch(x){$('#err').textContent=x.message}}
 cargar();
 </script></body></html>

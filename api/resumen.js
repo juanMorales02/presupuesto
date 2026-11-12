@@ -11,7 +11,7 @@ module.exports = run(async (req, res, db) => {
   const ingresos = sum('Ingreso') + prestamos;
   const gastos = { Necesidad: sum('Necesidad'), Gusto: sum('Gusto'), Ahorro: sum('Ahorro') };
   const queda = ingresos - gastos.Necesidad - gastos.Gusto - gastos.Ahorro - abonos;
-  const faltaDeudas = deudas.reduce((a, d) => a + d.monto - (d.abonos || []).reduce((x, y) => x + y.monto, 0), 0);
+  const faltaDeudas = deudas.filter((d) => d.categoria !== 'Banco').reduce((a, d) => a + d.monto - (d.abonos || []).reduce((x, y) => x + y.monto, 0), 0);
   res.json({ mes, ingresos, prestamos, gastos, abonos, queda, faltaDeudas,
     porcentajeQueda: ingresos > 0 ? Math.max(0, Math.min(1, queda / ingresos)) : 0 });
 });
