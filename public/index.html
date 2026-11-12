@@ -1,62 +1,114 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Presupuesto mensual</title>
 <style>
-:root{--n:#1b2a41;--l:#f2f4f7;--b:#cfd6e0;--r:#b91c1c;--g:#166534}
-*{box-sizing:border-box}body{font:14px Arial,sans-serif;margin:0;background:var(--l);color:#111}
-header{background:var(--n);color:#fff;padding:16px 24px;font-size:20px;font-weight:bold;display:flex;justify-content:space-between;align-items:center}
-header input{padding:6px;border-radius:4px;border:0}
-main{max-width:1000px;margin:20px auto;padding:0 12px;display:grid;gap:16px}
-.card{background:#fff;border:1px solid var(--b);border-radius:6px;padding:16px}
-h2{margin:0 0 12px;font-size:13px;letter-spacing:.05em;color:var(--n)}
-.big{font-size:34px;font-weight:bold}.bar{height:16px;background:var(--b);border-radius:8px;overflow:hidden;margin:8px 0}
-.bar>div{height:100%;background:var(--n);transition:width .3s}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
-.kpis div{background:var(--l);padding:10px;border-radius:4px}.kpis b{display:block;font-size:16px}
-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
-input,select,button{padding:8px;border:1px solid var(--b);border-radius:4px;font:inherit}
-button{background:var(--n);color:#fff;border:0;cursor:pointer}button.x{background:#fff;color:var(--r);border:1px solid var(--b);padding:4px 8px}
-table{width:100%;border-collapse:collapse}th{background:var(--b);text-align:left;padding:6px}td{padding:6px;border-bottom:1px solid var(--b)}
-.v{color:var(--r);font-weight:bold}.p{color:var(--g);font-weight:bold}#err{color:var(--r);padding:0 24px}
+:root{--n:#0f172a;--b:#2563eb;--l:#f1f5f9;--bd:#e2e8f0;--t:#64748b;--g:#059669;--r:#e11d48;--y:#d97706}
+*{box-sizing:border-box}body{margin:0;font:14px -apple-system,Segoe UI,Inter,Arial,sans-serif;background:var(--l);color:var(--n)}
+header{background:var(--n);color:#fff;padding:14px 28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.logo{width:40px;height:40px;border-radius:10px;background:var(--b);display:grid;place-items:center;font-size:20px;font-weight:700}
+.brand small{display:block;color:#94a3b8;letter-spacing:.1em;font-size:11px}.brand b{font-size:19px}
+nav{display:flex;gap:4px;margin-left:24px;background:#1e293b;padding:4px;border-radius:10px}
+nav a{color:#cbd5e1;padding:8px 16px;border-radius:7px;cursor:pointer;text-decoration:none;font-weight:600}
+nav a.on{background:var(--b);color:#fff}
+.sp{flex:1}.mes{display:flex;align-items:center;gap:6px;border:1px solid #334155;border-radius:10px;padding:4px}
+.mes button{background:none;border:0;color:#fff;font-size:18px;cursor:pointer;padding:4px 10px}.mes span{min-width:150px;text-align:center;font-weight:600;text-transform:capitalize}
+.lock{background:none;border:1px solid #334155;color:#cbd5e1;border-radius:10px;padding:9px 14px;cursor:pointer}
+main{max-width:1100px;margin:24px auto;padding:0 16px;display:grid;gap:20px}.vista{display:none;gap:20px}.vista.on{display:grid}
+.card{background:#fff;border:1px solid var(--bd);border-radius:16px;box-shadow:0 4px 18px rgba(15,23,42,.05);overflow:hidden}
+.pad{padding:24px}.hero{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;align-items:flex-end}
+.eyebrow{letter-spacing:.08em;font-size:12px;color:var(--t);font-weight:700}.big{font-size:54px;font-weight:800;line-height:1.1}.big small{font-size:16px;color:var(--t);font-weight:500}
+.barw{min-width:300px;flex:1;max-width:460px}.bar{height:10px;background:var(--bd);border-radius:6px;overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:linear-gradient(90deg,#2563eb,#6366f1);border-radius:6px;transition:width .4s}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:22px}
+.kpi{border:1px solid var(--bd);border-radius:12px;padding:14px;background:#f8fafc}.kpi span{color:var(--t);font-size:13px}.kpi b{display:block;font-size:22px;margin:6px 0 2px}.kpi small{color:var(--t);font-size:11px}
+.kpi.y{background:#fffbeb;border-color:#fde68a}.kpi.y b{color:#92400e}.kpi.r{background:#fff1f2;border-color:#fecdd3}.kpi.r b{color:var(--r)}
+.hd{padding:16px 24px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.hd h2{margin:0;font-size:15px;letter-spacing:.05em}.hd h2:before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--b);margin-right:10px}
+.hd.d h2:before{background:var(--r)}.hd small{color:var(--t)}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;padding:20px 24px;align-items:end}
+label{display:grid;gap:6px;font-weight:600;font-size:13px}label em{font-weight:400;color:var(--t);font-style:normal}
+input,select{padding:11px 12px;border:1px solid var(--bd);border-radius:10px;font:inherit;background:#fff;width:100%}
+input:focus,select:focus{outline:2px solid #bfdbfe;border-color:var(--b)}
+.btn{background:var(--n);color:#fff;border:0;border-radius:10px;padding:12px 18px;font-weight:700;cursor:pointer}.btn:hover{background:#1e293b}
+.btn.s{padding:6px 12px;font-size:13px}.x{background:none;border:0;color:var(--t);cursor:pointer;font-size:16px}.x:hover{color:var(--r)}
+table{width:100%;border-collapse:collapse}th{text-align:left;color:var(--t);font-size:11px;letter-spacing:.08em;padding:12px 24px;background:#f8fafc}
+td{padding:14px 24px;border-top:1px solid var(--bd)}.r{text-align:right}.empty{padding:30px;text-align:center;color:var(--t)}
+.tag{padding:3px 10px;border-radius:7px;font-size:12px;font-weight:700;display:inline-block}
+.Ingreso,.Pagado,.Préstamo-t{background:#d1fae5;color:#065f46}.Necesidad{background:#dbeafe;color:#1e40af}.Gusto{background:#ede9fe;color:#5b21b6}.Ahorro{background:#cffafe;color:#155e75}
+.Deuda-t,.Vencida{background:#ffe4e6;color:#9f1239}.Pendiente{background:#fef3c7;color:#92400e}.Sin{background:#e2e8f0;color:#475569}
+.pos{color:var(--g);font-weight:700}.neg{color:var(--n);font-weight:700}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid var(--bd);background:#fff;border-radius:20px;padding:6px 14px;cursor:pointer;font-weight:600;color:var(--t)}.chip.on{background:var(--n);color:#fff;border-color:var(--n)}
+.ft{padding:14px 24px;background:#f8fafc;border-top:1px solid var(--bd);display:flex;justify-content:space-between;color:var(--t);flex-wrap:wrap;gap:8px}
+.hist td{background:#f8fafc;color:var(--t);font-size:13px;padding:8px 24px 8px 48px}.link{cursor:pointer;font-weight:700}
+#err{max-width:1100px;margin:12px auto 0;padding:0 16px;color:var(--r)}
+#login{position:fixed;inset:0;background:rgba(15,23,42,.7);display:none;place-items:center;z-index:9}
+#login div{background:#fff;border-radius:16px;padding:30px;width:320px;display:grid;gap:14px;text-align:center}
+footer{text-align:center;color:var(--t);padding:20px}
 </style></head><body>
-<header>PRESUPUESTO MENSUAL<span><input type="month" id="mes"> <input type="password" id="pw" placeholder="Clave"></span></header>
+<header><div class="logo">$</div><div class="brand"><small>FINANZAS PERSONALES</small><b>PRESUPUESTO MENSUAL</b></div>
+<nav><a data-v="resumen" class="on">Resumen</a><a data-v="movs">Movimientos</a><a data-v="deudas">Deudas</a></nav><div class="sp"></div>
+<div class="mes"><button id="ant">‹</button><span id="mesl"></span><button id="sig">›</button></div><button class="lock" id="lk">🔒 Clave</button></header>
 <div id="err"></div>
 <main>
-<section class="card"><h2>TE QUEDA PARA GASTAR</h2><div class="big" id="queda">$0</div>
-<div class="bar"><div id="barra" style="width:0"></div></div><small id="de"></small>
-<div class="kpis" id="kpis"></div></section>
-
-<section class="card"><h2>REGISTRAR MOVIMIENTO</h2>
-<form id="fm"><input type="date" name="fecha" required><input name="descripcion" placeholder="Descripción">
-<select name="tipo"><option>Ingreso</option><option>Necesidad</option><option>Gusto</option><option>Ahorro</option></select>
-<input type="number" name="monto" min="1" step="any" placeholder="Monto" required><button>Agregar</button></form>
-<table id="tm"></table></section>
-
-<section class="card"><h2>DEUDAS</h2>
-<form id="fd"><input name="acreedor" placeholder="Acreedor" required><input name="concepto" placeholder="Concepto">
-<select name="tipo" title="Préstamo = me dieron plata (suma al presupuesto)"><option>Préstamo</option><option>Deuda</option></select>
-<input type="number" name="monto" min="1" step="any" placeholder="Monto" required><input type="date" name="fecha" title="Fecha en que la recibí">
-<input type="date" name="fechaLimite" title="Fecha límite"><button>Agregar</button></form>
-<small>Préstamo = te dieron plata (se suma a tus ingresos). Deuda = solo la debes.</small><table id="td"></table></section>
+<section class="vista on" id="v-resumen">
+ <div class="card pad"><div class="eyebrow">TE QUEDA PARA GASTAR</div>
+  <div class="hero"><div class="big"><span id="queda">$0</span> <small>COP</small></div>
+  <div class="barw"><div style="display:flex;justify-content:space-between"><span id="pct"></span><b id="rec"></b></div><div class="bar"><i id="barra" style="width:0"></i></div></div></div>
+  <div class="kpis" id="kpis"></div></div>
+ <div class="card"><div class="hd"><h2>REGISTRAR MOVIMIENTO</h2><small>Ingresos y gastos rápidos</small></div>
+  <form id="fm"><label>Fecha<input type="date" name="fecha" required></label><label>Descripción<input name="descripcion" placeholder="Ej: sueldo, mercado"></label>
+  <label>Tipo<select name="tipo"><option value="Ingreso">Ingreso (+)</option><option value="Necesidad">Necesidad (−)</option><option value="Gusto">Gusto (−)</option><option value="Ahorro">Ahorro (−)</option></select></label>
+  <label>Monto ($)<input class="m" name="monto" inputmode="numeric" placeholder="0" required></label><button class="btn">+ Agregar</button></form>
+  <table><tbody id="reciente"></tbody></table></div>
+</section>
+<section class="vista" id="v-movs"><div class="card"><div class="hd"><h2>MOVIMIENTOS DEL PRESUPUESTO</h2><div class="chips" id="chips"></div></div>
+ <table><thead><tr><th>FECHA<th>DESCRIPCIÓN<th>TIPO<th class="r">MONTO<th></tr></thead><tbody id="tm"></tbody></table><div class="ft"><span id="cnt"></span><b id="tot"></b></div></div></section>
+<section class="vista" id="v-deudas"><div class="card"><div class="hd d"><h2>DEUDAS Y PRÉSTAMOS</h2><small>Préstamo: suma a tus ingresos · Deuda: compromiso a pagar</small></div>
+ <form id="fd"><label>Acreedor / Persona<input name="acreedor" required></label><label>Concepto<input name="concepto"></label>
+ <label>Tipo<select name="tipo"><option value="Deuda">Deuda (por pagar)</option><option value="Préstamo">Préstamo (me dieron plata)</option></select></label>
+ <label>Monto total<input class="m" name="monto" inputmode="numeric" required></label>
+ <label>Fecha en que la adquirí<input type="date" name="fecha" required></label><label>Fecha límite <em>(opcional)</em><input type="date" name="fechaLimite"></label>
+ <button class="btn">+ Agregar</button></form></div>
+ <div class="card"><table><thead><tr><th>ACREEDOR<th>CONCEPTO<th>TIPO<th class="r">DEUDA<th class="r">ABONADO<th class="r">FALTA<th>LÍMITE<th>ESTADO<th></tr></thead><tbody id="td"></tbody></table>
+ <div class="ft"><span id="cd"></span><span id="rd"></span></div></div></section>
 </main>
+<footer>Presupuesto Mensual · Control de gastos y deudas</footer>
+<div id="login"><div><b style="font-size:18px">🔒 Ingresa tu clave</b><input type="password" id="pw" placeholder="Clave"><button class="btn" id="ok">Entrar</button></div></div>
 <script>
-const $=s=>document.querySelector(s),money=n=>'$'+Math.round(n).toLocaleString('es-CO');
-const hoy=new Date().toISOString().slice(0,10);$('#mes').value=hoy.slice(0,7);$('[name=fecha]').value=hoy;
-$('#pw').value=localStorage.pw||'';$('#pw').onchange=e=>{localStorage.pw=e.target.value;cargar()};$('#mes').onchange=()=>cargar();
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $$=n=>'$'+Math.round(n).toLocaleString('es-CO'),hoy=new Date().toISOString().slice(0,10);
+const fd=s=>s?new Date(s+'T00:00').toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'}):'';
+let mes=hoy.slice(0,7),filtro='Todos',D={};
+const num=v=>Number(String(v).replace(/\D/g,''));
+document.addEventListener('input',e=>{if(e.target.classList.contains('m')){const n=num(e.target.value);e.target.value=n?n.toLocaleString('es-CO'):''}});
+document.querySelectorAll('[type=date]').forEach(i=>{if(i.name==='fecha')i.value=hoy});
+document.querySelectorAll('nav a').forEach(a=>a.onclick=()=>{document.querySelectorAll('nav a,.vista').forEach(x=>x.classList.remove('on'));a.classList.add('on');$('#v-'+a.dataset.v).classList.add('on')});
+function mover(n){const [y,m]=mes.split('-').map(Number),d=new Date(y,m-1+n,1);mes=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');cargar()}
+$('#ant').onclick=()=>mover(-1);$('#sig').onclick=()=>mover(1);
+function pedirClave(){$('#login').style.display='grid';$('#pw').focus()}
+$('#lk').onclick=pedirClave;$('#ok').onclick=()=>{localStorage.pw=$('#pw').value;$('#login').style.display='none';cargar()};$('#pw').onkeydown=e=>e.key==='Enter'&&$('#ok').click();
 async function api(u,o={}){const r=await fetch(u,{...o,headers:{'content-type':'application/json','x-password':localStorage.pw||''},body:o.body&&JSON.stringify(o.body)});
- const j=await r.json();if(!r.ok)throw new Error(j.error);return j}
-function form(f,url,after){f.onsubmit=async e=>{e.preventDefault();try{await api(url,{method:'POST',body:Object.fromEntries(new FormData(f))});f.reset();$('[name=fecha]').value=hoy;cargar()}catch(x){$('#err').textContent=x.message}}}
-form($('#fm'),'/api/movimientos');form($('#fd'),'/api/deudas');
-async function borrar(u){await api(u,{method:'DELETE'});cargar()}
-async function abonar(id){const m=prompt('Monto del abono');if(m){await api('/api/deudas?id='+id,{method:'PATCH',body:{monto:m}});cargar()}}
-async function cargar(){try{$('#err').textContent='';const mes=$('#mes').value;
- const [r,m,d]=await Promise.all([api('/api/resumen?mes='+mes),api('/api/movimientos?mes='+mes),api('/api/deudas')]);
- $('#queda').textContent=money(r.queda);$('#queda').style.color=r.queda<0?'var(--r)':'';$('#barra').style.width=(r.porcentajeQueda*100)+'%';
- $('#de').textContent=`${Math.round(r.porcentajeQueda*100)}% de ${money(r.ingresos)} recibidos este mes`;
- $('#kpis').innerHTML=[['Necesidades',r.gastos.Necesidad],['Gustos',r.gastos.Gusto],['Ahorros',r.gastos.Ahorro],['Abonos a deudas',r.abonos],['Préstamos recibidos',r.prestamos],['Falta por pagar',r.faltaDeudas]].map(([a,b])=>`<div>${a}<b>${money(b)}</b></div>`).join('');
- $('#tm').innerHTML='<tr><th>Fecha<th>Descripción<th>Tipo<th>Monto<th></tr>'+m.map(x=>`<tr><td>${x.fecha}<td>${x.descripcion}<td>${x.tipo}<td>${money(x.monto)}<td><button class=x onclick="borrar('/api/movimientos?id=${x._id}')">✕</button>`).join('');
- $('#td').innerHTML='<tr><th>Acreedor<th>Concepto<th>Tipo<th>Deuda<th>Abonado<th>Falta<th>Límite<th>Estado<th></tr>'+d.map(x=>{const ab=(x.abonos||[]).reduce((a,y)=>a+y.monto,0),f=x.monto-ab;
-  const e=f<=0?'<span class=p>Pagado</span>':(x.fechaLimite&&x.fechaLimite<hoy?'<span class=v>Vencida</span>':'Pendiente');
-  return `<tr><td>${x.acreedor}<td>${x.concepto}<td>${x.tipo}<td>${money(x.monto)}<td>${money(ab)}<td>${money(f)}<td>${x.fechaLimite||''}<td>${e}<td><button onclick="abonar('${x._id}')">Abonar</button> <button class=x onclick="borrar('/api/deudas?id=${x._id}')">✕</button>`}).join('')
-}catch(x){$('#err').textContent=x.message}}
+ const j=await r.json();if(r.status===401){pedirClave();throw new Error('Ingresa la clave')}if(!r.ok)throw new Error(j.error);return j}
+function envio(f,url){f.onsubmit=async e=>{e.preventDefault();try{const b=Object.fromEntries(new FormData(f));b.monto=num(b.monto);await api(url,{method:'POST',body:b});f.reset();f.fecha.value=hoy;cargar()}catch(x){$('#err').textContent=x.message}}}
+envio($('#fm'),'/api/movimientos');envio($('#fd'),'/api/deudas');
+const borrar=async u=>{if(confirm('¿Eliminar?')){await api(u,{method:'DELETE'});cargar()}};
+const abonar=async id=>{const m=num(prompt('Monto del abono (COP)')||'');if(m){await api('/api/deudas?id='+id,{method:'PATCH',body:{monto:m,fecha:hoy}});cargar()}};
+const toggle=id=>{const r=document.getElementById('h'+id);r.style.display=r.style.display==='none'?'':'none'};
+function filas(m){return m.map(x=>`<tr><td>${fd(x.fecha)}<td>${esc(x.descripcion)}<td><span class="tag ${x.tipo}">${x.tipo}</span><td class="r ${x.tipo==='Ingreso'?'pos':'neg'}">${x.tipo==='Ingreso'?'+':'−'}${$$(x.monto)}<td class="r"><button class="x" onclick="borrar('/api/movimientos?id=${x._id}')">✕</button>`).join('')||'<tr><td colspan=5 class="empty">Sin movimientos este mes</td></tr>'}
+function pinta(){const {r,m,d}=D;
+ $('#mesl').textContent=new Date(mes+'-01T00:00').toLocaleDateString('es-CO',{month:'long',year:'numeric'});
+ $('#queda').textContent=$$(r.queda);$('#queda').style.color=r.queda<0?'var(--r)':'';$('#barra').style.width=r.porcentajeQueda*100+'%';
+ $('#pct').textContent=(r.porcentajeQueda*100).toFixed(1)+'% disponible';$('#rec').textContent='de '+$$(r.ingresos)+' recibidos';
+ const k=(t,v,s,c='')=>`<div class="kpi ${c}"><span>${t}</span><b>${$$(v)}</b><small>${s}</small></div>`;
+ $('#kpis').innerHTML=k('Necesidades',r.gastos.Necesidad,'Servicios y comida')+k('Gustos',r.gastos.Gusto,'Ocio y deseos')+k('Ahorros',r.gastos.Ahorro,'Fondo de reserva')+k('Abonos a deudas',r.abonos,'Pagado este mes','y')+k('Préstamos recibidos',r.prestamos,'Créditos de terceros')+k('Falta por pagar',r.faltaDeudas,'Compromiso pendiente','r');
+ $('#reciente').innerHTML=filas(m.slice(0,5));
+ $('#chips').innerHTML=['Todos','Ingreso','Necesidad','Gusto','Ahorro'].map(t=>`<span class="chip ${t===filtro?'on':''}" onclick="filtro='${t}';pinta()">${t}</span>`).join('');
+ const f=m.filter(x=>filtro==='Todos'||x.tipo===filtro);$('#tm').innerHTML=filas(f);$('#cnt').textContent=f.length+' movimiento(s)';
+ $('#tot').textContent='Total: '+$$(f.reduce((a,x)=>a+(x.tipo==='Ingreso'?x.monto:-x.monto),0));
+ let tc=0,tr=0;$('#td').innerHTML=d.map(x=>{const ab=(x.abonos||[]).reduce((a,y)=>a+y.monto,0),fa=x.monto-ab;tc+=x.monto;tr+=fa;
+  const e=fa<=0?['Pagado','Pagado']:!x.fechaLimite?['Sin fecha de pago','Sin']:x.fechaLimite<hoy?['Vencida','Vencida']:['Pendiente','Pendiente'];
+  const h=(x.abonos||[]).map(a=>`${fd(a.fecha)}: ${$$(a.monto)}`).join(' · ')||'Sin abonos todavía';
+  return `<tr><td><b>${esc(x.acreedor)}</b><br><span class="link" style="color:var(--b);font-size:12px" onclick="toggle('${x._id}')">Ver abonos (${(x.abonos||[]).length})</span><td>${esc(x.concepto)}<td><span class="tag ${x.tipo}-t">${x.tipo}</span><td class="r">${$$(x.monto)}<td class="r pos">${$$(ab)}<td class="r" style="color:var(--r);font-weight:700">${$$(fa)}<td>${x.fechaLimite?fd(x.fechaLimite):'—'}<td><span class="tag ${e[1]}">${e[0]}</span><td class="r"><button class="btn s" onclick="abonar('${x._id}')">+ Abonar</button> <button class="x" onclick="borrar('/api/deudas?id=${x._id}')">✕</button>
+  <tr class="hist" id="h${x._id}" style="display:none"><td colspan="9">Adquirida el ${fd(x.fecha)} · Abonos: ${h}`}).join('')||'<tr><td colspan=9 class="empty">Sin deudas registradas</td></tr>';
+ $('#cd').textContent=d.length+' compromiso(s) · Total: '+$$(tc);$('#rd').innerHTML='Resta: <b style="color:var(--r)">'+$$(tr)+'</b>'}
+async function cargar(){try{$('#err').textContent='';const [r,m,d]=await Promise.all([api('/api/resumen?mes='+mes),api('/api/movimientos?mes='+mes),api('/api/deudas')]);D={r,m,d};pinta()}catch(x){$('#err').textContent=x.message}}
 cargar();
 </script></body></html>
